@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.venomgopro.aviasales.controller.dto.FlightCreateRequest;
 import ru.venomgopro.aviasales.model.Flight;
 import ru.venomgopro.aviasales.repository.FlightRepository;
+
 import java.util.Collection;
 
 @RestController //спринг увидит эту аннотацию, когда будет запускаться (он сканирует все классы пакета)
@@ -27,6 +28,11 @@ public class FlightController {
     @PostMapping("flights")
     public Flight create(@RequestBody FlightCreateRequest flightCreateRequest) {
         return flightRepository.create(flightCreateRequest);
+    }
+
+    @PostMapping("flights/{id}")
+    public Flight change(@PathVariable Integer id, @RequestBody FlightCreateRequest flightCreateRequest) throws Exception {
+        return flightRepository.change(id,flightCreateRequest);
     }
 
 }

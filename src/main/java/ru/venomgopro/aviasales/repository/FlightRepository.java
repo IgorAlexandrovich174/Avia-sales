@@ -34,13 +34,16 @@ public class FlightRepository {
         return flight;
     }
 
-    public Flight change(int id, FlightCreateRequest flightCreateRequest) {
-        return allFlights.put(id,
-                new Flight(
-                        id,
-                        flightCreateRequest.getDepartureAirport(),
-                        flightCreateRequest.getArrivalAirport(),
-                        flightCreateRequest.getDate()));
+    public Flight change(int id, FlightCreateRequest flightCreateRequest) throws Exception {
+        if (allFlights.containsKey(id)) {
+            Flight flight = allFlights.get(id);
+            flight.setDepartureAirport(flightCreateRequest.getDepartureAirport());
+            flight.setArrivalAirport(flightCreateRequest.getArrivalAirport());
+            flight.setDate(flightCreateRequest.getDate());
+            return flight;
+        } else {
+            // TODO: 09.07.2023 создать исключение
+            throw new Exception("Нет данных о рейсе"); // пока что как заглушка
+        }
     }
-
 }
