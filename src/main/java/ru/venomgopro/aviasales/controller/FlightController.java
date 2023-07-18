@@ -30,9 +30,13 @@ public class FlightController {
         return flightRepository.create(flightCreateRequest);
     }
 
-    @PostMapping("flights/{id}")
+    @PutMapping("flights/{id}")
     public Flight change(@PathVariable Integer id, @RequestBody FlightCreateRequest flightCreateRequest) throws Exception {
         return flightRepository.change(id,flightCreateRequest);
     }
 
+    @DeleteMapping("flights/{id}")
+    public void delete(@PathVariable Integer id){
+        flightRepository.delete(id);
+    }
 }

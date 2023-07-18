@@ -1,10 +1,15 @@
 package ru.venomgopro.aviasales.repository;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 import ru.venomgopro.aviasales.controller.dto.FlightCreateRequest;
 import ru.venomgopro.aviasales.model.Flight;
 
-import java.time.LocalDate;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +24,9 @@ public class FlightRepository {
     }
 
     public Flight getById(int id) {
+        if (!allFlights.containsKey(id)) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,"Рейс не найден");
+        }
         return allFlights.get(id);
     }
 
@@ -34,16 +42,34 @@ public class FlightRepository {
         return flight;
     }
 
-    public Flight change(int id, FlightCreateRequest flightCreateRequest) throws Exception {
-        if (allFlights.containsKey(id)) {
-            Flight flight = allFlights.get(id);
-            flight.setDepartureAirport(flightCreateRequest.getDepartureAirport());
-            flight.setArrivalAirport(flightCreateRequest.getArrivalAirport());
-            flight.setDate(flightCreateRequest.getDate());
-            return flight;
-        } else {
+    public Flight change(int id, FlightCreateRequest flightCreateRequest) throws ResponseStatusException {
+        if (!allFlights.containsKey(id)) {
             // TODO: 09.07.2023 создать исключение
-            throw new Exception("Нет данных о рейсе"); // пока что как заглушка
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Рейс не найден");
+        }
+        Flight flight = allFlights.get(id);
+        flight.setDepartureAirport(flightCreateRequest.getDepartureAirport());
+        flight.setArrivalAirport(flightCreateRequest.getArrivalAirport());
+        flight.setDate(flightCreateRequest.getDate());
+        return flight;
+    }
+
+    // TODO: 15.07.2023 Сделать с выбросом исключения без проверки содержания айдишника в списке 
+    public void delete(int id) throws RuntimeException {
+        allFlights.remove(id);
+    }
+
+    public void test() throws ClassNotFoundException {
+        Class.forName("org.postgresql.Driver");
+        try (Connection con = DriverManager
+                .getConnection("jdbc:postgresql://localhost:5432/aviasales", "postgres", "password")) {
+            try (Statement stmt = con.createStatement()) {
+            stmt.execute("SELECT * FROM flight");
+
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 }
+
