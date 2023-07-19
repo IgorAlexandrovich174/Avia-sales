@@ -1,6 +1,8 @@
 package ru.venomgopro.aviasales.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import ru.venomgopro.aviasales.controller.dto.FlightCreateRequest;
 import ru.venomgopro.aviasales.model.Flight;
 import ru.venomgopro.aviasales.repository.FlightRepository;
@@ -21,7 +23,7 @@ public class FlightController {
     }
 
     @GetMapping("flights/{id}")
-    public Flight getById(@PathVariable Integer id) {
+    public Flight getById(@PathVariable Integer id) throws ClassNotFoundException {
         return flightRepository.getById(id);
     }
 
@@ -32,11 +34,15 @@ public class FlightController {
 
     @PutMapping("flights/{id}")
     public Flight change(@PathVariable Integer id, @RequestBody FlightCreateRequest flightCreateRequest) throws Exception {
-        return flightRepository.change(id,flightCreateRequest);
+        Flight flight = flightRepository.change(id, flightCreateRequest);
+        if (flight == null) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Рейс не найден");
+        }
+        return flight;
     }
 
     @DeleteMapping("flights/{id}")
-    public void delete(@PathVariable Integer id){
+    public void delete(@PathVariable Integer id) {
         flightRepository.delete(id);
     }
 }
