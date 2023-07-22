@@ -15,11 +15,6 @@ public class FlightRepository {
 
     private final Connection connection;
     private int counter;
-    private Map<Integer, Flight> allFlights = new HashMap<>();
-
-    public Collection<Flight> getAllFlights() {
-        return allFlights.values();
-    }
 
     public FlightRepository(Connection connection) {
         this.connection = connection;
@@ -31,8 +26,16 @@ public class FlightRepository {
         preparedStatement.setString(1, flightCreateRequest.getDepartureAirport());
         preparedStatement.setString(2, flightCreateRequest.getArrivalAirport());
         preparedStatement.setDate(3, Date.valueOf(flightCreateRequest.getDate()));
-        preparedStatement.executeUpdate();
-        return flight;
+
+        try (ResultSet resultSet = preparedStatement.executeQuery()){
+            if (!resultSet.next()){
+                return null;
+            }
+            return new Flight(resultSet.getInt("id"),
+                    flightCreateRequest.getDepartureAirport(),
+                    flightCreateRequest.getArrivalAirport(),
+                    flightCreateRequest.getDate());
+        }
     }
 
     public Flight change(int id, FlightCreateRequest flightCreateRequest) {

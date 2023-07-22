@@ -7,6 +7,7 @@ import ru.venomgopro.aviasales.controller.dto.FlightCreateRequest;
 import ru.venomgopro.aviasales.model.Flight;
 import ru.venomgopro.aviasales.repository.FlightRepository;
 
+import java.sql.SQLException;
 import java.util.Collection;
 
 @RestController //спринг увидит эту аннотацию, когда будет запускаться (он сканирует все классы пакета)
@@ -17,18 +18,14 @@ public class FlightController {
         this.flightRepository = flightRepository;
     }
 
-    @GetMapping("flights")
-    public Collection<Flight> getAll() {
-        return flightRepository.getAllFlights();
-    }
-
+    // TODO: 22.07.2023 создать метод возврата списка всех рейсов
     @GetMapping("flights/{id}")
     public Flight getById(@PathVariable Integer id) throws ClassNotFoundException {
         return flightRepository.getById(id);
     }
 
     @PostMapping("flights")
-    public Flight create(@RequestBody FlightCreateRequest flightCreateRequest) {
+    public Flight create(@RequestBody FlightCreateRequest flightCreateRequest) throws SQLException {
         return flightRepository.create(flightCreateRequest);
     }
 
