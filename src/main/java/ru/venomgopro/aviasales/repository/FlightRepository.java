@@ -6,18 +6,32 @@ import ru.venomgopro.aviasales.model.Flight;
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class FlightRepository {
 
     private final Connection connection;
-    private int counter;
 
     public FlightRepository(Connection connection) {
         this.connection = connection;
+    }
+
+    public List<Flight> getAllFlight() throws SQLException {
+        List<Flight> allFlight = new ArrayList<>();
+        PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM flight");
+        try (ResultSet resultSet = preparedStatement.executeQuery()) {
+            while (resultSet.next()) {
+                Flight flight = new Flight(
+                        resultSet.getInt("id"),
+                        resultSet.getString("departure_airport"),
+                        resultSet.getString("arrival_airport"),
+                        resultSet.getDate("date").toLocalDate());
+                allFlight.add(flight);
+            }
+        }
+        return allFlight;
     }
 
     public Flight create(FlightCreateRequest flightCreateRequest) throws SQLException {
@@ -27,8 +41,8 @@ public class FlightRepository {
         preparedStatement.setString(2, flightCreateRequest.getArrivalAirport());
         preparedStatement.setDate(3, Date.valueOf(flightCreateRequest.getDate()));
 
-        try (ResultSet resultSet = preparedStatement.executeQuery()){
-            if (!resultSet.next()){
+        try (ResultSet resultSet = preparedStatement.executeQuery()) {
+            if (!resultSet.next()) {
                 return null;
             }
             return new Flight(resultSet.getInt("id"),

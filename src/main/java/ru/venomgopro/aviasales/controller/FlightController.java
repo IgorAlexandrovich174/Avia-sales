@@ -9,6 +9,7 @@ import ru.venomgopro.aviasales.repository.FlightRepository;
 
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.List;
 
 @RestController //спринг увидит эту аннотацию, когда будет запускаться (он сканирует все классы пакета)
 public class FlightController {
@@ -19,8 +20,14 @@ public class FlightController {
     }
 
     // TODO: 22.07.2023 создать метод возврата списка всех рейсов
+
+    @GetMapping("flights")
+    public List<Flight> allFlight() throws SQLException {
+        return flightRepository.getAllFlight();
+    }
+
     @GetMapping("flights/{id}")
-    public Flight getById(@PathVariable Integer id) throws ClassNotFoundException {
+    public Flight getById(@PathVariable Integer id) {
         return flightRepository.getById(id);
     }
 
@@ -30,7 +37,7 @@ public class FlightController {
     }
 
     @PutMapping("flights/{id}")
-    public Flight change(@PathVariable Integer id, @RequestBody FlightCreateRequest flightCreateRequest) throws Exception {
+    public Flight change(@PathVariable Integer id, @RequestBody FlightCreateRequest flightCreateRequest) {
         Flight flight = flightRepository.change(id, flightCreateRequest);
         if (flight == null) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Рейс не найден");
