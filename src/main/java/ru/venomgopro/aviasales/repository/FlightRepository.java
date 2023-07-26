@@ -73,14 +73,14 @@ public class FlightRepository {
         return getById(id);
     }
 
-//    public void delete(int id) {
-//        try (PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM flight where id = ?")) {
-//            preparedStatement.setInt(1, id);
-//            preparedStatement.executeUpdate();
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
+    public void delete(int id) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM flight where id = ?")) {
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public Flight getById(int id) {
         try (PreparedStatement stmt = connection.prepareStatement("SELECT * FROM flight where id = ?")) {
