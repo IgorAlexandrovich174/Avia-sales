@@ -19,8 +19,6 @@ public class FlightController {
         this.flightRepository = flightRepository;
     }
 
-    // TODO: 22.07.2023 создать метод возврата списка всех рейсов
-
     @GetMapping("flights")
     public List<Flight> allFlight() throws SQLException {
         return flightRepository.getAllFlight();
