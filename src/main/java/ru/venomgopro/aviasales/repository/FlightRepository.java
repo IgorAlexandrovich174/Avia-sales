@@ -25,13 +25,13 @@ public class FlightRepository {
     }
 
     public Flight create(FlightCreateRequest flightCreateRequest) throws SQLException {
-         Integer id = jdbcTemplate.queryForObject(
-                 "INSERT INTO flight(departure_airport,arrival_airport,date) VALUES(?,?,?) RETURNING id",
-                 Integer.class);
+        Integer id = jdbcTemplate.queryForObject(
+                "INSERT INTO flight(departure_airport,arrival_airport,date) VALUES(?,?,?) RETURNING id",
+                Integer.class);
         return new Flight(id,
-                    flightCreateRequest.getDepartureAirport(),
-                    flightCreateRequest.getArrivalAirport(),
-                    flightCreateRequest.getDate());
+                flightCreateRequest.getDepartureAirport(),
+                flightCreateRequest.getArrivalAirport(),
+                flightCreateRequest.getDate());
     }
 
     public Flight change(int id, FlightCreateRequest flightCreateRequest) {
@@ -53,7 +53,13 @@ public class FlightRepository {
 //            throw new RuntimeException(e);
 //        }
 //        return getById(id);
-        return null;
+        String sql = "UPDATE flight SET departure_airport = ?, arrival_airport = ?, date = ? WHERE id = ?";
+        jdbcTemplate.update(
+                sql,
+                flightCreateRequest.getDepartureAirport(),
+                flightCreateRequest.getArrivalAirport(),
+                flightCreateRequest.getDate());
+        return getById(id);
     }
 
     public void delete(int id) {

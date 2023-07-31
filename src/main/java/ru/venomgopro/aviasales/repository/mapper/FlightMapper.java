@@ -10,11 +10,11 @@ import java.sql.SQLException;
 @Component
 public class FlightMapper implements RowMapper<Flight> {
     @Override
-    public Flight mapRow(ResultSet rs, int rowNum) throws SQLException {
+    public Flight mapRow(ResultSet resultSet, int rowNum) throws SQLException {
         return new Flight(
-                rs.getInt("id"),
-                rs.getString("departure_airport"),
-                rs.getString("arrival_airport"),
-                rs.getDate("date").toLocalDate());
+                resultSet.getInt("id"),
+                resultSet.getString("departure_airport"),
+                resultSet.getString("arrival_airport"),
+                resultSet.getDate("date").toLocalDate());
     }
 }
