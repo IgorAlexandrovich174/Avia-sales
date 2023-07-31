@@ -6,7 +6,7 @@ import ru.venomgopro.aviasales.controller.dto.FlightCreateRequest;
 import ru.venomgopro.aviasales.model.Flight;
 import ru.venomgopro.aviasales.repository.mapper.FlightMapper;
 
-import java.sql.SQLException;
+import java.sql.Date;
 import java.util.List;
 
 @Component
@@ -20,77 +20,46 @@ public class FlightRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<Flight> getAllFlight() throws SQLException {
+    public List<Flight> getAllFlight() {
         return jdbcTemplate.query("SELECT * FROM flight", flightMapper);
     }
 
-    public Flight create(FlightCreateRequest flightCreateRequest) throws SQLException {
-        Integer id = jdbcTemplate.queryForObject(
-                "INSERT INTO flight(departure_airport,arrival_airport,date) VALUES(?,?,?) RETURNING id",
-                Integer.class);
-        return new Flight(id,
-                flightCreateRequest.getDepartureAirport(),
-                flightCreateRequest.getArrivalAirport(),
-                flightCreateRequest.getDate());
+    public Flight create(FlightCreateRequest flightCreateRequest) {
+        return jdbcTemplate.query(
+                        "INSERT INTO flight(departure_airport,arrival_airport,date)VALUES (?,?,?) RETURNING *",
+                        new Object[]{
+                                flightCreateRequest.getDepartureAirport(),
+                                flightCreateRequest.getArrivalAirport(),
+                                flightCreateRequest.getDate()}, flightMapper)
+                .stream()
+                .findAny()
+                .orElse(null);
     }
 
     public Flight change(int id, FlightCreateRequest flightCreateRequest) {
-//        Flight flight = getById(id);
-//        if (flight == null) {
-//            return null;
-//        }
-//        try (PreparedStatement preparedStatement = connection.prepareStatement(
-//                "UPDATE flight SET departure_airport = ?, arrival_airport = ?, date = ? WHERE id = ?")) {
-//
-//            preparedStatement.setString(1, flightCreateRequest.getDepartureAirport());
-//            preparedStatement.setString(2, flightCreateRequest.getArrivalAirport());
-//            preparedStatement.setDate(3, Date.valueOf(flightCreateRequest.getDate()));
-//            preparedStatement.setInt(4, id);
-//
-//            preparedStatement.executeUpdate();
-//
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-//        return getById(id);
-        String sql = "UPDATE flight SET departure_airport = ?, arrival_airport = ?, date = ? WHERE id = ?";
-        jdbcTemplate.update(
-                sql,
-                flightCreateRequest.getDepartureAirport(),
-                flightCreateRequest.getArrivalAirport(),
-                flightCreateRequest.getDate());
-        return getById(id);
+        String sql = "UPDATE flight SET departure_airport = ?, arrival_airport = ?, date = ? WHERE id = ? RETURNING *";
+        return jdbcTemplate.query(
+                        sql,
+                        new Object[]{flightCreateRequest.getDepartureAirport(),
+                                flightCreateRequest.getArrivalAirport(),
+                                Date.valueOf(flightCreateRequest.getDate()),
+                                id}, flightMapper)
+                .stream()
+                .findAny()
+                .orElse(null);
+
     }
 
     public void delete(int id) {
-//        try (PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM flight where id = ?")) {
-//            preparedStatement.setInt(1, id);
-//            preparedStatement.executeUpdate();
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
+        jdbcTemplate.update("DELETE FROM flight WHERE id = ?", id);
     }
 
     public Flight getById(int id) {
-//        try (PreparedStatement stmt = connection.prepareStatement("SELECT * FROM flight where id = ?")) {
-//            stmt.setInt(1, id);
-//            try (ResultSet result = stmt.executeQuery()) {
-//                if (!result.next()) {
-//                    return null;
-//                } else {
-//                    var departure_airport = result.getString("departure_airport");
-//                    var arrival_airport = result.getString("arrival_airport");
-//                    LocalDate date = result
-//                            .getDate("date")
-//                            .toLocalDate();
-//                    return new Flight(id, departure_airport, arrival_airport, date);
-//                }
-//            }
-//        } catch (SQLException ex) {
-//            throw new RuntimeException(ex);
-//        }
-//    }
-        return null;
+        return jdbcTemplate.query("SELECT * FROM flight WHERE id = ?", new Object[]{id}, flightMapper)
+                .stream()
+                .findAny()
+                .orElse(null);
     }
 }
+
 

@@ -8,7 +8,6 @@ import ru.venomgopro.aviasales.model.Flight;
 import ru.venomgopro.aviasales.repository.FlightRepository;
 
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.List;
 
 @RestController //спринг увидит эту аннотацию, когда будет запускаться (он сканирует все классы пакета)
@@ -34,8 +33,8 @@ public class FlightController {
         return flightRepository.create(flightCreateRequest);
     }
 
-    @PutMapping(value = "flights/{id}", consumes = "application/json;charset=UTF-8")
-    public Flight change(@PathVariable Integer id, FlightCreateRequest flightCreateRequest) {
+    @PutMapping(value = "flights/{id}")
+    public Flight change(@PathVariable Integer id, @RequestBody FlightCreateRequest flightCreateRequest) {
         Flight flight = flightRepository.change(id, flightCreateRequest);
         if (flight == null) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Рейс не найден");
