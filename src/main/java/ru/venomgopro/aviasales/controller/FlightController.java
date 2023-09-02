@@ -7,19 +7,17 @@ import ru.venomgopro.aviasales.controller.dto.FlightCreateRequest;
 import ru.venomgopro.aviasales.model.Flight;
 import ru.venomgopro.aviasales.repository.FlightRepository;
 
-import java.sql.SQLException;
 import java.util.List;
 
-@RestController //спринг увидит эту аннотацию, когда будет запускаться (он сканирует все классы пакета)
+@RestController
 public class FlightController {
     private FlightRepository flightRepository;
-
     public FlightController(FlightRepository flightRepository) {
         this.flightRepository = flightRepository;
     }
 
     @GetMapping("flights")
-    public List<Flight> allFlight() throws SQLException {
+    public List<Flight> allFlight() {
         return flightRepository.getAllFlight();
     }
 
@@ -29,7 +27,7 @@ public class FlightController {
     }
 
     @PostMapping("flights")
-    public Flight create(@RequestBody FlightCreateRequest flightCreateRequest) throws SQLException {
+    public Flight create(@RequestBody FlightCreateRequest flightCreateRequest) {
         return flightRepository.create(flightCreateRequest);
     }
 

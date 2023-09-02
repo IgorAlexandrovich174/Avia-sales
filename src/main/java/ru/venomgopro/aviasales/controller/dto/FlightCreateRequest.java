@@ -7,6 +7,10 @@ public class FlightCreateRequest {
     private String departureAirport;
     private String arrivalAirport;
     private LocalDate date;
+    private Integer aircraftId;
+    public Integer getAircraftId() {
+        return aircraftId;
+    }
 
     public String getDepartureAirport() {
         return departureAirport;
@@ -31,4 +35,6 @@ public class FlightCreateRequest {
     public void setDate(LocalDate date) {
         this.date = date;
     }
+
+
 }

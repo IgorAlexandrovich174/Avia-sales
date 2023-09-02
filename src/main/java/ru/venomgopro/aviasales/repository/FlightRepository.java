@@ -12,7 +12,6 @@ import java.util.List;
 @Component
 public class FlightRepository {
     private final FlightMapper flightMapper;
-
     private final JdbcTemplate jdbcTemplate;
 
     public FlightRepository(FlightMapper flightMapper, JdbcTemplate jdbcTemplate) {
@@ -21,29 +20,35 @@ public class FlightRepository {
     }
 
     public List<Flight> getAllFlight() {
-        return jdbcTemplate.query("SELECT * FROM flight", flightMapper);
+        return jdbcTemplate.query("SELECT * FROM flights", flightMapper);
     }
 
     public Flight create(FlightCreateRequest flightCreateRequest) {
+        String sql = "INSERT INTO flights(departure_airport,arrival_airport,date,aircraft_id)VALUES (?,?,?,?) RETURNING *";
         return jdbcTemplate.query(
-                        "INSERT INTO flight(departure_airport,arrival_airport,date)VALUES (?,?,?) RETURNING *",
+                        sql,
                         new Object[]{
                                 flightCreateRequest.getDepartureAirport(),
                                 flightCreateRequest.getArrivalAirport(),
-                                flightCreateRequest.getDate()}, flightMapper)
+                                flightCreateRequest.getDate(),
+                                flightCreateRequest.getAircraftId()},
+                        flightMapper)
                 .stream()
                 .findAny()
                 .orElse(null);
     }
 
     public Flight change(int id, FlightCreateRequest flightCreateRequest) {
-        String sql = "UPDATE flight SET departure_airport = ?, arrival_airport = ?, date = ? WHERE id = ? RETURNING *";
+        String sql = "UPDATE flights SET departure_airport = ?, arrival_airport = ?, date = ?, aircraft_id = ? WHERE id = ? RETURNING *";
         return jdbcTemplate.query(
                         sql,
-                        new Object[]{flightCreateRequest.getDepartureAirport(),
+                        new Object[]{
+                                flightCreateRequest.getDepartureAirport(),
                                 flightCreateRequest.getArrivalAirport(),
                                 Date.valueOf(flightCreateRequest.getDate()),
-                                id}, flightMapper)
+                                flightCreateRequest.getAircraftId(),
+                                id
+                        }, flightMapper)
                 .stream()
                 .findAny()
                 .orElse(null);
@@ -51,11 +56,11 @@ public class FlightRepository {
     }
 
     public void delete(int id) {
-        jdbcTemplate.update("DELETE FROM flight WHERE id = ?", id);
+        jdbcTemplate.update("DELETE FROM flights WHERE id = ?", id);
     }
 
     public Flight getById(int id) {
-        return jdbcTemplate.query("SELECT * FROM flight WHERE id = ?", new Object[]{id}, flightMapper)
+        return jdbcTemplate.query("SELECT * FROM flights WHERE id = ?", new Object[]{id}, flightMapper)
                 .stream()
                 .findAny()
                 .orElse(null);

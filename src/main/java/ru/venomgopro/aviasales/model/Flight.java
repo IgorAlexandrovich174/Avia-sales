@@ -3,16 +3,19 @@ package ru.venomgopro.aviasales.model;
 import java.time.LocalDate;
 
 public class Flight {
-    private int id;
+    private Integer id;
     private String departureAirport;
     private String arrivalAirport;
     private LocalDate date;
+    private Integer aircraftId;
 
-    public Flight(int id, String departureAirport, String arrivalAirport, LocalDate date) {
+    public Flight(Integer id, String departureAirport, String arrivalAirport, LocalDate date, Integer aircraftId) {
         this.id = id;
         this.departureAirport = departureAirport;
         this.arrivalAirport = arrivalAirport;
         this.date = date;
+        this.aircraftId = aircraftId;
+
     }
 
     public int getId() {
@@ -46,4 +49,13 @@ public class Flight {
     public void setDate(LocalDate date) {
         this.date = date;
     }
+
+    public Integer getAircraftId() {
+        return aircraftId;
+    }
+
+    public void setAirplaneId(Integer aircraftId) {
+        this.aircraftId = aircraftId;
+    }
+
 }

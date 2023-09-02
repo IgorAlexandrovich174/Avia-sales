@@ -15,6 +15,7 @@ public class FlightMapper implements RowMapper<Flight> {
                 resultSet.getInt("id"),
                 resultSet.getString("departure_airport"),
                 resultSet.getString("arrival_airport"),
-                resultSet.getDate("date").toLocalDate());
+                resultSet.getDate("date").toLocalDate(),
+                resultSet.getInt("aircraft_id"));
     }
 }
